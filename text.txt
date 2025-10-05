@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>เป็นแฟนกันไหม 💘</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#ff7aa2">
+<style>
+  :root{
+    --bg1:#ff8fb1; --bg2:#a88beb; --bg3:#7bdff2;
+    --card:#ffffffaa; --ink:#1f2937; --muted:#6b7280;
+    --accent:#ff5c8a; --accent2:#7c5cff; --ok:#16a34a;
+    --ring:#ffd1e0; --glass:#ffffff40; --shadow:0 10px 30px rgba(0,0,0,.15);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:"Kanit",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--ink); overflow-x:hidden; background:#111;
+  }
+  /* Animated gradient bg under canvases */
+  .bg{
+    position:fixed; inset:0; z-index:-3;
+    background:linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));
+    background-size:200% 200%; animation:grad 20s ease infinite;
+  }
+  @keyframes grad{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+
+  /* Canvases */
+  #ambient, #fx { position:fixed; inset:0; pointer-events:none; }
+  #ambient{ z-index:-2; }
+  #fx{ z-index:50; }
+
+  main{
+    min-height:100%;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:clamp(16px,2.5vw,32px);
+  }
+  header{
+    width:min(980px,100%); margin:0 auto 18px;
+  }
+  .progress{
+    height:8px; background:#ffffff3d; border-radius:999px; overflow:hidden;
+    box-shadow:inset 0 1px 0 #fff5, 0 1px 2px #0002;
+  }
+  .bar{ height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent2));
+        transition:width .4s ease; }
+
+  .card{
+    width:min(980px,100%); background:var(--card);
+    backdrop-filter: blur(12px) saturate(120%);
+    border:1px solid var(--glass);
+    border-radius:24px; padding:clamp(18px,3vw,28px);
+    box-shadow: var(--shadow);
+  }
+  h1{ margin:0 0 12px; font-size:clamp(26px,4.2vw,42px); line-height:1.1 }
+  h2{ margin:.2rem 0 1rem; font-weight:600; color:#111 }
+  p{ color:var(--muted); margin:.5rem 0 1rem; font-size:clamp(15px,2.2vw,18px) }
+
+  .actions{
+    display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;
+  }
+  .btn{
+    appearance:none; border:0; border-radius:14px;
+    padding:14px 18px; font-weight:700; cursor:pointer;
+    transition: transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  }
+  .btn:active{ transform: translateY(1px) scale(.99) }
+  .primary{ background:linear-gradient(180deg,var(--accent),#ff2a6f); color:#fff }
+  .secondary{ background:#fff; color:#111 }
+  .ghost{ background:transparent; color:#111; border:1px dashed #00000033 }
+  .ok{ background:linear-gradient(180deg,#34d399,#059669); color:white }
+  .nope{ background:#111; color:#fff; position:relative }
+  .chip-group{ display:flex; flex-wrap:wrap; gap:10px }
+  .chip{
+    padding:10px 14px; border-radius:999px; border:1px solid #0000001a;
+    background:#fff; cursor:pointer; user-select:none;
+    transition: all .15s ease; font-weight:600;
+  }
+  .chip[data-on="1"]{ background: #ffe1eb; border-color: var(--accent); color:#b91c1c }
+  .grid{
+    display:grid; gap:14px; grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  }
+  .field{
+    display:flex; flex-direction:column; gap:6px;
+  }
+  input[type="text"]{
+    border:1px solid #0000001f; background:#fff; padding:14px 16px; border-radius:12px;
+    font-size:16px; outline: none; box-shadow: inset 0 1px 0 #fff8;
+  }
+  input[type="text"]:focus{ box-shadow:0 0 0 4px var(--ring) }
+  label{ font-weight:600 }
+  .checks{ display:flex; flex-direction:column; gap:10px }
+  .check{
+    display:flex; align-items:flex-start; gap:10px; background:#ffffff90; padding:10px 12px; border-radius:12px; border:1px solid #0000001a;
+  }
+  .check input{ margin-top:3px }
+  .spacer{ height:6px }
+  .center{ text-align:center }
+  .big-ask{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px; padding:24px 8px;
+  }
+  .big-ask h1{ font-size: clamp(30px,6vw,56px) }
+  .sub{ font-size: clamp(14px,2.3vw,18px); color: #222 }
+
+  /* Celebrate message */
+  .hero{
+    text-align:center; padding:24px 10px;
+  }
+  .hero h1{ font-size: clamp(30px,6vw,58px) }
+  .tag{ display:inline-block; padding:6px 10px; border-radius:999px; background:#111; color:#fff; font-weight:700; letter-spacing:.2px }
+
+  /* Accessibility */
+  @media (prefers-reduced-motion: reduce){
+    .bar{ transition:none }
+    .bg{ animation:none }
+  }
+
+  footer{
+    width:min(980px,100%); margin:16px auto 0; text-align:center; color:#000000a0; font-size:14px;
+  }
+
+</style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <canvas id="ambient" aria-hidden="true"></canvas>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <main>
+    <header aria-label="ความคืบหน้า">
+      <div class="progress"><div class="bar" id="bar"></div></div>
+    </header>
+
+    <section class="card" role="group" aria-label="แบบขอเป็นแฟน">
+      <!-- Step 0 -->
+      <div class="step" data-step="0">
+        <h1>เฮ้ you ✨ เริ่มก่อนนิดเดียว</h1>
+        <p>ใส่ชื่อไว้ให้ข้อความมันซึ้งขึ้น (ข้ามได้ถ้าขี้เกียจ)</p>
+        <div class="grid">
+          <div class="field">
+            <label for="me">ชื่อเรา</label>
+            <input id="me" type="text" placeholder="เช่น ฟลุ๊ค" inputmode="text" />
+          </div>
+          <div class="field">
+            <label for="you">ชื่อคนที่เราจะขอเป็นแฟน</label>
+            <input id="you" type="text" placeholder="เช่น มีน" inputmode="text" />
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary next">ต่อไป</button>
+        </div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="step" data-step="1" hidden>
+        <h1>เหตุผลที่ชอบคุณ…</h1>
+        <p>เลือกได้หลายข้อเลย (อันนี้เอาไว้โชว์หน้า “สรุปความในใจ”) ❤️</p>
+        <div class="chip-group" id="reasons">
+          <div class="chip">ยิ้มแล้วโลกละลาย</div>
+          <div class="chip">คุยแล้วสบายใจ</div>
+          <div class="chip">ขับรถเก่งพาไปกินของอร่อย</div>
+          <div class="chip">คิดถึงตลอด</div>
+          <div class="chip">บ๊องๆนิดหน่อย น่ารักมาก</div>
+          <div class="chip">ตั้งใจกับสิ่งที่รัก</div>
+          <div class="chip">เรารู้สึกปลอดภัยเวลาอยู่ด้วย</div>
+          <div class="chip">คือคนโปรดของเรา</div>
+        </div>
+        <div class="actions">
+          <button class="btn ghost prev">ย้อนกลับ</button>
+          <button class="btn primary next">ต่อไป</button>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step" data-step="2" hidden>
+        <h1>สัญญาใจ 3 ข้อ (เวอร์ชันจริงจังแต่โคตรน่ารัก)</h1>
+        <div class="checks">
+          <label class="check"><input type="checkbox" value="ซื่อสัตย์และสื่อสารตรงๆ"> <span>ซื่อสัตย์และสื่อสารตรงๆ ไม่ดราม่าเกินเหตุ</span></label>
+          <label class="check"><input type="checkbox" value="ให้เกียรติเวลาส่วนตัว"> <span>เคารพเวลาส่วนตัวและพื้นที่ของกันและกัน</span></label>
+          <label class="check"><input type="checkbox" value="เติบโตไปด้วยกัน"> <span>ช่วยกันเป็นเวอร์ชันที่ดีกว่าเมื่อวาน</span></label>
+          <label class="check"><input type="checkbox" value="หมูกระทะอย่าเท"> <span>นัดหมูกระทะอย่าเทเด็ดขาด 🤝</span></label>
+        </div>
+        <div class="spacer"></div>
+        <p class="muted">ติ๊กอย่างน้อย 2 ข้อนะ ถึงจะไปขั้นสุดท้ายได้</p>
+        <div class="actions">
+          <button class="btn ghost prev">ย้อนกลับ</button>
+          <button class="btn primary next" id="to-final" disabled>ต่อไป</button>
+        </div>
+      </div>
+
+      <!-- Step 3 (ASK) -->
+      <div class="step" data-step="3" hidden>
+        <div class="big-ask">
+          <div class="tag">คำถามสำคัญ</div>
+          <h1 id="askText">จะเป็นแฟนกับเรามั้ย ? 🥹💖</h1>
+          <div class="sub" id="askSub">เราจะดูแลกันดีๆ แบบโคตรดี แล้วไปกินหมูกระทะกันบ่อยๆ</div>
+          <div class="actions" style="margin-top:16px">
+            <button class="btn ok" id="yesBtn" aria-label="ตกลง">ตกลงเล้ยยย 💘</button>
+            <button class="btn nope" id="noBtn" aria-label="ยังไม่ใช่">เอ่อ…ยังไม่ชัวร์</button>
+          </div>
+          <div class="actions">
+            <button class="btn secondary prev">ย้อนกลับ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 (CELEBRATE) -->
+      <div class="step" data-step="4" hidden>
+        <div class="hero">
+          <div class="tag">OMG YES! 🎉</div>
+          <h1 id="ggTitle">เป็นแฟนกันแล้วน้า</h1>
+          <p id="ggSub" style="color:#111;opacity:.9">บันทึกวันนี้ไว้เลย — <span id="today"></span></p>
+
+          <canvas id="cardCanvas" width="1080" height="1350" style="max-width:520px; width:100%; border-radius:16px; box-shadow: var(--shadow); background:#fff; margin:12px auto"></canvas>
+
+          <div class="actions" style="justify-content:center">
+            <a id="dl" class="btn primary" download="เราเป็นแฟนกันแล้ว.png">ดาวน์โหลดการ์ด 💾</a>
+            <button class="btn secondary" id="shareBtn">แชร์ความรัก 💌</button>
+            <button class="btn ghost" id="restart">เริ่มใหม่อีกครั้ง</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+    <footer>ทำด้วยใจ • ไม่มีโฆษณา ไม่มีดราม่า มีแต่รัก 💗</footer>
+  </main>
+
+<script>
+(function(){
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+  const steps = $$('.step');
+  let step = 0;
+  const bar = $('#bar');
+
+  const inputMe = $('#me');
+  const inputYou = $('#you');
+  const reasonsWrap = $('#reasons');
+  const toFinalBtn = $('#to-final');
+
+  // Persist names
+  inputMe.value = localStorage.getItem('love_me') || '';
+  inputYou.value = localStorage.getItem('love_you') || '';
+
+  inputMe.addEventListener('input', e=> localStorage.setItem('love_me', e.target.value.trim()));
+  inputYou.addEventListener('input', e=> localStorage.setItem('love_you', e.target.value.trim()));
+
+  // Toggle chips
+  reasonsWrap.addEventListener('click', e=>{
+    const chip = e.target.closest('.chip'); if(!chip) return;
+    const on = chip.getAttribute('data-on') === '1';
+    chip.setAttribute('data-on', on? '0':'1');
+  });
+
+  // Checkboxes rule
+  const checks = $$('.check input');
+  const gate = ()=> {
+    const count = checks.filter(c=>c.checked).length;
+    toFinalBtn.disabled = count < 2;
+  };
+  checks.forEach(c=> c.addEventListener('change', gate));
+
+  // Navigation
+  $$('.next').forEach(b=> b.addEventListener('click', ()=> go(step+1)));
+  $$('.prev').forEach(b=> b.addEventListener('click', ()=> go(step-1)));
+
+  function go(n){
+    step = Math.max(0, Math.min(steps.length-1, n));
+    steps.forEach((el,i)=> el.hidden = i!==step);
+    const pct = (step/(steps.length-1))*100;
+    bar.style.width = pct + '%';
+    updateAskText();
+    if(step===4){ drawCard(); updateToday(); }
+  }
+
+  // Dynamic ask text
+  function updateAskText(){
+    if(step!==3) return;
+    const me = (inputMe.value || 'เรา').trim();
+    const you = (inputYou.value || 'คุณ').trim();
+    const ask = `คุณ${you} จะเป็นแฟนกับ${me} มั้ย ? 🥹💖`;
+    $('#askText').textContent = ask;
+    $('#askSub').textContent = `รับรองดูแลดีมากกก กินหมูกระทะด้วยกันบ่อยๆ แล้วเติบโตไปด้วยกันนะ`;
+  }
+
+  // NO button that runs away
+  const noBtn = $('#noBtn');
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('click', dodge);
+  function dodge(){
+    const b = noBtn.getBoundingClientRect();
+    const pad = 20;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const nx = Math.max(pad, Math.min(vw - b.width - pad, Math.random()*(vw - b.width - pad*2)));
+    const ny = Math.max(pad, Math.min(vh - b.height - pad, Math.random()*(vh - b.height - pad*2)));
+    noBtn.style.position='fixed';
+    noBtn.style.left = nx + 'px';
+    noBtn.style.top = ny + 'px';
+  }
+
+  // YES action => confetti hearts + go celebrate
+  $('#yesBtn').addEventListener('click', ()=>{
+    blastHearts();
+    setTimeout(()=> go(4), 900);
+  });
+
+  // Restart
+  $('#restart').addEventListener('click', ()=>{
+    noBtn.removeAttribute('style');
+    go(0);
+    // reset selections
+    $$('.chip').forEach(c=> c.setAttribute('data-on','0'));
+    checks.forEach(c=> c.checked=false); gate();
+  });
+
+  // Share
+  $('#shareBtn').addEventListener('click', async ()=>{
+    const me = (inputMe.value || 'เรา').trim();
+    const you = (inputYou.value || 'คุณ').trim();
+    const txt = `ยืนยันแล้วนะ 🎉\nคุณ${you} เป็นแฟนกับ${me} แล้ว 💗`;
+    try{
+      if(navigator.share){
+        await navigator.share({title:'เราเป็นแฟนกันแล้ว 💘', text:txt});
+      }else{
+        await navigator.clipboard.writeText(txt);
+        alert('คัดลอกข้อความไปที่คลิปบอร์ดแล้ว 💌');
+      }
+    }catch(e){ console.log(e); }
+  });
+
+  // ==== Ambient floating hearts ====
+  const ambient = $('#ambient');
+  const fx = $('#fx');
+  const ctxA = ambient.getContext('2d');
+  const ctxF = fx.getContext('2d');
+  let A=[], F=[];
+  function resize(){
+    ambient.width = fx.width = window.innerWidth;
+    ambient.height = fx.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize); resize();
+
+  function heartPath(ctx,x,y,s){
+    ctx.moveTo(x,y);
+    ctx.bezierCurveTo(x-s, y-s, x-2*s, y+s*0.4, x, y+2*s);
+    ctx.bezierCurveTo(x+2*s, y+s*0.4, x+s, y-s, x, y);
+  }
+  function drawHeart(ctx,x,y,s,fill,alpha=1){
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    heartPath(ctx,x,y,s);
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function makeAmbient(){
+    A.length=0;
+    const count = Math.min(80, Math.floor((ambient.width*ambient.height)/25000));
+    for(let i=0;i<count;i++){
+      A.push({
+        x: Math.random()*ambient.width,
+        y: Math.random()*ambient.height,
+        s: Math.random()*8+4,
+        a: Math.random()*0.6+0.2,
+        v: Math.random()*0.4+0.1,
+        hue: Math.random()
+      });
+    }
+  }
+  makeAmbient();
+
+  function h2c(h){ // hue 0..1 to nice pink/peach/purple ramp
+    const p = h*360;
+    return `hsl(${(320 + p*0.2)%360} 90% 65%)`;
+  }
+
+  function loopAmbient(){
+    ctxA.clearRect(0,0,ambient.width,ambient.height);
+    for(const p of A){
+      p.y -= p.v;
+      if(p.y < -20){ p.y = ambient.height + 20; p.x = Math.random()*ambient.width }
+      drawHeart(ctxA, p.x, p.y, p.s, h2c(p.hue), p.a);
+    }
+    requestAnimationFrame(loopAmbient);
+  }
+  loopAmbient();
+
+  // Confetti hearts burst
+  function blastHearts(){
+    const N = 180;
+    F.length=0;
+    const w = fx.width, h = fx.height;
+    for(let i=0;i<N;i++){
+      const ang = Math.random()*Math.PI*2;
+      const spd = Math.random()*7+4;
+      F.push({
+        x:w/2, y:h/3,
+        vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd - 2,
+        s: Math.random()*10+6,
+        life: 1, decay: Math.random()*0.015+0.008,
+        hue: Math.random()
+      });
+    }
+    animateFx();
+  }
+  let fxPlaying=false;
+  function animateFx(){
+    if(fxPlaying) return;
+    fxPlaying=true;
+    (function tick(){
+      ctxF.clearRect(0,0,fx.width,fx.height);
+      let alive = 0;
+      for(const p of F){
+        if(p.life<=0) continue;
+        alive++;
+        p.vy += 0.12; // gravity
+        p.x += p.vx; p.y += p.vy;
+        p.life -= p.decay;
+        drawHeart(ctxF, p.x, p.y, p.s, h2c(p.hue), Math.max(0,p.life));
+      }
+      if(alive>0){ requestAnimationFrame(tick); }
+      else { fxPlaying=false; }
+    })();
+  }
+
+  // Today text (Thai)
+  function updateToday(){
+    const opt = { dateStyle:'full', timeStyle:'short' };
+    $('#today').textContent = new Date().toLocaleString('th-TH', opt);
+  }
+
+  // Card PNG generation
+  function drawCard(){
+    const c = $('#cardCanvas'), ctx = c.getContext('2d');
+    const W=c.width, H=c.height;
+    const me = (inputMe.value || 'เรา').trim();
+    const you = (inputYou.value || 'คุณ').trim();
+
+    // bg gradient
+    const g = ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,'#ffe3ec'); g.addColorStop(1,'#e8e7ff');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    // soft frame
+    ctx.fillStyle='#ffffff';
+    roundRect(ctx, 40,40, W-80, H-80, 36); ctx.fill();
+
+    // confetti hearts pattern
+    for(let i=0;i<80;i++){
+      const x = Math.random()*W, y = Math.random()*H*0.5+40;
+      const s = Math.random()*10+6;
+      drawHeart(ctx,x,y,s,`hsla(${310+Math.random()*30},90%,66%,0.18)`,1);
+    }
+
+    // titles
+    ctx.fillStyle='#111'; ctx.textAlign='center';
+    ctx.font='700 72px Kanit, system-ui, sans-serif';
+    ctx.fillText('เราเป็นแฟนกันแล้ว', W/2, H*0.58);
+
+    ctx.font='400 40px Kanit, system-ui, sans-serif';
+    ctx.fillStyle='#444';
+    ctx.fillText(`${you}  ❤  ${me}`, W/2, H*0.64);
+
+    // date tag
+    ctx.font='600 34px Kanit, system-ui, sans-serif';
+    const dateTxt = new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+    const tagW = ctx.measureText(dateTxt).width + 40;
+    const tx = (W-tagW)/2, ty = H*0.70;
+    ctx.fillStyle='#111'; roundRect(ctx, tx, ty-40, tagW, 56, 16); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.fillText(dateTxt, W/2, ty);
+
+    // download link
+    $('#dl').href = c.toDataURL('image/png');
+  }
+
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  // Init first screen
+  gate(); go(0);
+
+  // ===== a11y: Enter to go next on step 0
+  document.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter' && !e.isComposing){
+      const cur = steps[step];
+      const nextBtn = cur.querySelector('.next');
+      if(nextBtn && !nextBtn.disabled) nextBtn.click();
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
